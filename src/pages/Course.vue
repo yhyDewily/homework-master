@@ -14,6 +14,23 @@
           选课
         </v-tab>
       </v-tabs>
+      <v-radio-group v-model="search_action"
+                     row
+                     style="width: 60%; margin-left: auto; margin-right: auto">
+        <v-radio label="课程名查询" value="1"></v-radio>
+        <v-radio label="课程号查询" value="2"></v-radio>
+      </v-radio-group>
+      <v-text-field
+        v-model="keyword"
+      append-outer-icon="mdi-magnify"
+      style="width: 60%; margin-right: auto; margin-left: auto"
+        @click:append-outer="searchCourse"
+      ></v-text-field>
+      <v-btn v-show="search"
+             color="error"
+             @click="resetList"
+             style="float:right; margin-right: 20px"
+      >重置</v-btn>
       <v-tabs-items v-model="tab">
         <v-tab-item>
           <v-simple-table>
@@ -54,15 +71,19 @@
                 <th class="text-left">学院</th>
                 <th class="text-left">教师</th>
                 <th class="text-left">结课时间</th>
+                <th class="text-left">选课</th>
               </tr>
               </thead>
               <tbody>
               <tr v-for="(item, index) in courseList" :key="index" >
-                <td @click="goToDetail(item.courseId)">{{ item.courseId }}</td>
-                <td @click="goToDetail(item.courseId)">{{ item.courseName }}</td>
-                <td @click="goToDetail(item.courseId)">{{ item.major }}</td>
-                <td @click="goToDetail(item.courseId)">{{ item.teacher }}</td>
-                <td @click="goToDetail(item.courseId)">{{ item.stopTime }}</td>
+                <td>{{ item.courseId }}</td>
+                <td>{{ item.courseName }}</td>
+                <td>{{ item.major }}</td>
+                <td>{{ item.teacher }}</td>
+                <td>{{ item.stopTime }}</td>
+                <td>
+                  <v-btn class="mb-1" x-small color="success" @click="add_stu_course(item.courseId)">选课</v-btn>
+                </td>
               </tr>
               </tbody>
             </template>
@@ -90,6 +111,9 @@ export default {
   },
   data: () => ({
     tab: null,
+    search: false,
+    search_action: 0,
+    keyword: '',
     course_page: 1,
     course_totalElements: 0,
     course_totalNums: 0,
@@ -140,23 +164,21 @@ export default {
   }),
   mounted () {
     this.getChosenCourse()
-    this.getAllCourse()
+    this.getUnselectCourse()
   },
   methods: {
     getChosenCourse () {
       this.$axios.post('/course/get_student_course.do').then(
         res => {
-          console.log(res)
           this.course = res.data.data.content
           this.course_pagination.itemsLength = Math.floor(res.data.data.totalElements / 10)
           this.course_pagination.itemsLength = res.data.data.totalPages
         }
       )
     },
-    getAllCourse () {
-      this.$axios.post('/course/get_all.do').then(
+    getUnselectCourse () {
+      this.$axios.post('/course/get_unchosen_course.do').then(
         res => {
-          console.log(res)
           this.courseList = res.data.data.content
           this.choose_pagination.itemsLength = Math.floor(res.data.data.totalElements / 10)
           this.choose_pagination.itemsLength = res.data.data.totalPages
@@ -175,7 +197,7 @@ export default {
       })
     },
     loadCourseData (val) {
-      this.$axios.post('/course/get_all.do', this.$qs.stringify({
+      this.$axios.post('/course/get_unchosen_course.do', this.$qs.stringify({
         pageNum: val
       }
       )).then(
@@ -184,6 +206,46 @@ export default {
           this.course_pagination.itemsLength = Math.floor(res.data.data.totalElements / 10)
         }
       )
+    },
+    add_stu_course (courseId) {
+      console.log(courseId)
+      this.$axios.post('/course/add_stu_course.do', this.$qs.stringify({
+        courseId: courseId
+      })).then(res => {
+        if (res.data.status === 0) {
+          this.getUnselectCourse()
+          this.getChosenCourse()
+        }
+      })
+    },
+    searchCourse () {
+      if (this.search_action === 0) {
+        return
+      }
+      if (this.keyword === '') {
+        return
+      }
+      this.$axios.post('/course/search_course.do', this.$qs.stringify({
+        keyword: this.keyword,
+        action: this.search_action,
+        tab: this.tab
+      })).then(res => {
+        this.search = true
+        if (this.tab === 0) {
+          this.course = res.data.data.content
+          this.course_pagination.itemsLength = Math.floor(res.data.data.totalElements / 10)
+          this.course_pagination.itemsLength = res.data.data.totalPages
+        } else {
+          this.courseList = res.data.data.content
+          this.choose_pagination.itemsLength = Math.floor(res.data.data.totalElements / 10)
+          this.choose_pagination.itemsLength = res.data.data.totalPages
+        }
+      })
+    },
+    resetList () {
+      this.keyword = ''
+      this.getUnselectCourse()
+      this.getChosenCourse()
     }
   }
 }

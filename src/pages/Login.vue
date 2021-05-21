@@ -34,6 +34,7 @@
                     v-model="email"
                     :rules="emailRules"
                     type="text"
+                    required
                   ></v-text-field>
 
                   <v-text-field
@@ -42,7 +43,9 @@
                     name="password"
                     v-model="password"
                     prepend-icon="mdi-lock"
+                    :rules="passwordRules"
                     type="password"
+                    required
                   ></v-text-field>
                 </v-form>
               </v-card-text>
@@ -68,35 +71,43 @@ export default {
       password: '',
       emailRules: [
         v => !!v || 'email不可为空',
-        v => v => /.+@.+\..+/.test(v) || '必须为有效邮箱'
+        v => /.+@.+\..+/.test(v) || '必须为有效邮箱'
+      ],
+      passwordRules: [
+        v => !!v || '请输入密码',
+        v => (v && v.length >= 6) || '密码长度不够'
       ]
     }
   },
   methods: {
     login () {
-      let email = this.email
-      let password = this.password
-      this.$axios.post('/user/login.do', this.$qs.stringify({
-        email: email,
-        password: password
-      })).then(res => {
-        console.log(res)
-        if (res.data.status === 0) {
-          this.$cookie.set('userId', res.data.data.id, {expires: 'Session'})
-          localStorage.setItem('isLogin', '1')
-          this.$store.dispatch('saveUserName', res.data.data.username)
-          this.$router.push({
-            name: 'Home',
-            params: {
-              from: 'login'
-            }
-          })
-        } else if (res.data.status === 1) {
-          window.alert(res.data.msg)
-        }
-      }).catch(error => {
-        console.log(error)
-      })
+      if (this.$refs.form.validate()) {
+        let email = this.email
+        let password = this.password
+        this.$axios.post('/user/login.do', this.$qs.stringify({
+          email: email,
+          password: password
+        })).then(res => {
+          console.log(res)
+          if (res.data.status === 0) {
+            this.$cookie.set('userId', res.data.data.id, {expires: 'Session'})
+            localStorage.setItem('isLogin', '1')
+            this.$store.dispatch('saveUserName', res.data.data.username)
+            this.$router.push({
+              name: 'Home',
+              params: {
+                from: 'login'
+              }
+            })
+          } else if (res.data.status === 1) {
+            window.alert(res.data.msg)
+          }
+        }).catch(error => {
+          console.log(error)
+        })
+      } else {
+        window.alert('请输入完整信息')
+      }
     },
     validate () {
       this.$refs.form.validate()

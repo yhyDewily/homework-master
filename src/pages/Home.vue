@@ -50,7 +50,7 @@
 
     <v-app-bar app>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>你好{{ name }}! 欢迎来到课程管理系统</v-toolbar-title>
+      <v-toolbar-title>你好{{ name }}! 欢迎来到课程管理系统！</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn text @click="logout">注销</v-btn>
     </v-app-bar>
@@ -90,7 +90,7 @@ export default {
     getUser () {
       this.$axios.post('/user/get_user_info.do')
         .then(res => {
-          console.log(res)
+          this.$store.dispatch('saveUserName', res.data.data.name)
           this.name = res.data.data.name
         })
     },
