@@ -178,7 +178,7 @@
           <v-card flat>
             <v-card-text>
               <p>
-                Fusce a quam. Phasellus nec sem in justo pellentesque facilisis. Nam eget dui. Proin viverra, ligula sit amet ultrices semper, ligula arcu tristique sapien, a accumsan nisi mauris ac eros. In dui magna, posuere eget, vestibulum et, tempor auctor, justo.
+                课堂作业
               </p>
             </v-card-text>
           </v-card>

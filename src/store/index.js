@@ -5,7 +5,8 @@ import actions from './action'
 Vue.use(Vuex)
 
 const state = {
-  username: '' // 登录用户名
+  username: '', // 登录用户名
+  userId: ''
 
 }
 export default new Vuex.Store({

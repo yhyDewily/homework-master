@@ -7,6 +7,7 @@ import Course from '../pages/Course'
 import Grade from '../pages/Grade'
 import Forum from '../pages/Forum'
 import CourseDetail from '../components/CourseDetail'
+import ForumDetail from '../components/ForumDetail'
 
 Vue.use(Router)
 
@@ -56,6 +57,14 @@ export default new Router({
           path: 'forum',
           name: 'forum',
           component: Forum,
+          meta: {
+            requireAuth: true
+          }
+        },
+        {
+          path: 'question_detail/:id',
+          name: 'question_detail',
+          component: ForumDetail,
           meta: {
             requireAuth: true
           }

@@ -34,7 +34,7 @@
             <v-icon>mdi-layers-triple</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>成绩管理</v-list-item-title>
+            <v-list-item-title>我的成绩</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item link to="/forum">
@@ -42,7 +42,7 @@
             <v-icon>mdi-folder-multiple</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>我的发帖</v-list-item-title>
+            <v-list-item-title>讨论区</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>

@@ -22,6 +22,7 @@
       </v-radio-group>
       <v-text-field
         v-model="keyword"
+        label="搜索"
       append-outer-icon="mdi-magnify"
       style="width: 60%; margin-right: auto; margin-left: auto"
         @click:append-outer="searchCourse"

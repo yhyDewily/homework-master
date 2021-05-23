@@ -51,6 +51,82 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
+                <v-dialog
+                  v-model="dialog"
+                  persistent
+                  max-width="390"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      color="primary"
+                      dark
+                      v-bind="attrs"
+                      v-on="on"
+                      text
+                    >
+                      没有账号？点击注册
+                    </v-btn>
+                  </template>
+                  <v-card>
+                    <v-card-title class="headline">
+                      注册账号
+                    </v-card-title>
+                    <v-form
+                      style="width: 80%; margin-right: auto; margin-left: auto"
+                      ref="reg">
+                      <v-text-field
+                        v-model="newUser.username"
+                        :counter="10"
+                        :rules="nameRules"
+                        label="用户名"
+                        required
+                        placeholder="请输入真实姓名以方便和同学老师沟通"
+                      ></v-text-field>
+                      <v-text-field
+                        v-model="newUser.email"
+                        :rules="emailRules"
+                        label="邮箱"
+                        required
+                      ></v-text-field>
+                      <v-text-field
+                        v-model="newUser.email"
+                        :counter="16"
+                        :rules="passwordRules"
+                        label="密码"
+                        required
+                      ></v-text-field>
+                      <v-radio-group
+                      v-model="newUser.role"
+                      row>
+                        <v-radio
+                        label="学生"
+                        value= 0
+                        ></v-radio>
+                        <v-radio
+                        label="教师"
+                        value=1>
+                        </v-radio>
+                      </v-radio-group>
+                    </v-form>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        color="error"
+                        text
+                        @click="dialog = false"
+                      >
+                        取消
+                      </v-btn>
+                      <v-btn
+                        color="green darken-1"
+                        text
+                        @click="register"
+                      >
+                        注册
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
                 <v-btn color="primary" @click="login">登录</v-btn>
               </v-card-actions>
             </v-card>
@@ -67,15 +143,26 @@ export default {
   data () {
     return {
       valid: true,
+      dialog: false,
+      newUser: {
+        username: '',
+        password: '',
+        email: '',
+        role: null
+      },
       email: '',
       password: '',
+      nameRules: [
+        v => !!v || '用户名不可为空',
+        v => (v && v.length <= 10) || '用户名长度必须小于10'
+      ],
       emailRules: [
         v => !!v || 'email不可为空',
         v => /.+@.+\..+/.test(v) || '必须为有效邮箱'
       ],
       passwordRules: [
-        v => !!v || '请输入密码',
-        v => (v && v.length >= 6) || '密码长度不够'
+        v => (v && v.length >= 6) || '密码过短',
+        v => (v && v.length <= 16) || '密码过长'
       ]
     }
   },
@@ -117,6 +204,16 @@ export default {
     },
     resetValidation () {
       this.$refs.form.resetValidation()
+    },
+    register () {
+      if (this.$refs.reg.validate()) {
+        this.$axios.post('', this.$qs.stringify({
+          name: this.newUser.username,
+          password: this.newUser.password,
+          mail: this.newUser.email,
+          role: this.newUser.role
+        }))
+      }
     }
   }
 }
