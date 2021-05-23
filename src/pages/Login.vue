@@ -212,7 +212,16 @@ export default {
           password: this.newUser.password,
           mail: this.newUser.email,
           role: this.newUser.role
-        }))
+        })).then(res => {
+          if (res.data.status === 0) {
+            this.newUser = {}
+            window.alert(res.data.msg)
+            this.dialog = false
+          } else {
+            window.alert(res.data.msg)
+            this.dialog = false
+          }
+        })
       }
     }
   }
