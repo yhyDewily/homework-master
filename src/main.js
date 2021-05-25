@@ -22,11 +22,32 @@ router.beforeEach((to, from, next) => {
   // eslint-disable-next-line no-unused-vars
   let isLogin = localStorage.getItem('isLogin')
   isLogin = Boolean(Number(isLogin))
-
+  let role = localStorage.getItem('role')
+  role = Number(role)
   if (to.meta.requireAuth) {
     if (isLogin) {
-      next()
+      // console.log(to)
+      if (to.meta.requireStudent && role === 0) {
+        // console.log('学生页面，学生')
+        next()
+      } else if (to.meta.requireStudent && role === 1) {
+        // console.log('学生页面，教师')
+        next({
+          path: '/teacher_home',
+          query: {redirect: to.fullPath}
+        })
+      } else if (to.meta.requireTeacher && role === 0) {
+        // console.log('教师页面，学生')
+        next({
+          path: '/',
+          query: {redirect: to.fullPath}
+        })
+      } else {
+        // console.log('教师页面，教师')
+        next()
+      }
     } else {
+      console.log('登录')
       next({
         path: '/login',
         query: {redirect: to.fullPath}

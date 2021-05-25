@@ -8,6 +8,12 @@ import Grade from '../pages/Grade'
 import Forum from '../pages/Forum'
 import CourseDetail from '../components/CourseDetail'
 import ForumDetail from '../components/ForumDetail'
+import TeacherHome from '../Teacher/TeacherHome'
+import TeacherPersonInfo from '../Teacher/TeacherPersonInfo'
+import TeacherForum from '../Teacher/TeacherForum'
+import TeacherGrade from '../Teacher/TeacherGrade'
+import TeacherCourse from '../Teacher/TeacherCourse'
+import TeacherCourseDetail from '../Teacher/TeacherCourseDetail'
 
 Vue.use(Router)
 
@@ -18,7 +24,8 @@ export default new Router({
       name: 'Home',
       component: Home,
       meta: {
-        requireAuth: true
+        requireAuth: true,
+        requireStudent: true
       },
       children: [
         {
@@ -26,7 +33,8 @@ export default new Router({
           name: 'person_info',
           component: PersonInfo,
           meta: {
-            requireAuth: true
+            requireAuth: true,
+            requireStudent: true
           }
         },
         {
@@ -34,7 +42,8 @@ export default new Router({
           name: 'course',
           component: Course,
           meta: {
-            requireAuth: true
+            requireAuth: true,
+            requireStudent: true
           }
         },
         {
@@ -42,7 +51,8 @@ export default new Router({
           name: 'course_detail',
           component: CourseDetail,
           meta: {
-            requireAuth: true
+            requireAuth: true,
+            requireStudent: true
           }
         },
         {
@@ -50,7 +60,8 @@ export default new Router({
           name: 'grade',
           component: Grade,
           meta: {
-            requireAuth: true
+            requireAuth: true,
+            requireStudent: true
           }
         },
         {
@@ -58,7 +69,8 @@ export default new Router({
           name: 'forum',
           component: Forum,
           meta: {
-            requireAuth: true
+            requireAuth: true,
+            requireStudent: true
           }
         },
         {
@@ -66,7 +78,72 @@ export default new Router({
           name: 'question_detail',
           component: ForumDetail,
           meta: {
-            requireAuth: true
+            requireStudent: true
+          }
+        }
+      ]
+    },
+    {
+      path: '/teacher_home',
+      name: 'teacher_home',
+      component: TeacherHome,
+      meta: {
+        requireAuth: true,
+        requireTeacher: true
+      },
+      children: [
+        {
+          path: 'teacher_person_info',
+          name: 'teacher_person_info',
+          component: TeacherPersonInfo,
+          meta: {
+            requireAuth: true,
+            requireTeacher: true
+          }
+        },
+        {
+          path: 'teacher_course',
+          name: 'teacher_course',
+          component: TeacherCourse,
+          meta: {
+            requireAuth: true,
+            requireTeacher: true
+          }
+        },
+        {
+          path: 'teacher_course_detail/:id',
+          name: 'teacher_course_detail',
+          component: TeacherCourseDetail,
+          meta: {
+            requireAuth: true,
+            requireTeacher: true
+          }
+        },
+        {
+          path: 'teacher_grade',
+          name: 'teacher_grade',
+          component: TeacherGrade,
+          meta: {
+            requireAuth: true,
+            requireTeacher: true
+          }
+        },
+        {
+          path: 'teacher_forum',
+          name: 'teacher_forum',
+          component: TeacherForum,
+          meta: {
+            requireAuth: true,
+            requireTeacher: true
+          }
+        },
+        {
+          path: 'teacher_question_detail/:id',
+          name: 'teacher_question_detail',
+          component: ForumDetail,
+          meta: {
+            requireAuth: true,
+            requireTeacher: true
           }
         }
       ]

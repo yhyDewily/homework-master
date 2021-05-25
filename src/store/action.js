@@ -4,5 +4,8 @@ export default {
   },
   saveUserId (context, userId) {
     context.commit('saveUserId', userId)
+  },
+  saveUserRole (context, role) {
+    context.commit('saveUserRole', role)
   }
 }

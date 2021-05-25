@@ -170,7 +170,21 @@
           <v-card flat>
             <v-list dense>
               <v-subheader>课堂资料</v-subheader>
-              <v-list-item></v-list-item>
+              <v-card flat>
+                <v-data-table
+                  :headers="material_headers"
+                  :items = "course_material"
+                  :search="keyword"
+                >
+                  <template v-slot:item.actions = "{ item }">
+                    <v-icon
+                      small
+                      class="mr-2"
+                      @click="download_material(item)"
+                    >mdi-arrow-down</v-icon>
+                  </template>
+                </v-data-table>
+              </v-card>
             </v-list>
           </v-card>
         </v-tab-item>
@@ -181,6 +195,14 @@
                 课堂作业
               </p>
             </v-card-text>
+            <v-file-input
+              style="width: 60%;"
+              chips
+              counter
+              label="File input"
+              v-model="homework"
+            ></v-file-input>
+            <v-btn @click="uploadHomework" color="success">上传</v-btn>
           </v-card>
         </v-tab-item>
       </v-tabs>
@@ -206,6 +228,9 @@ export default {
       isDelete: false,
       chooseGroup: false,
       chooseCaptain: false,
+      homework: [],
+      keyword: '',
+      teacherId: '',
       courseId: '',
       courseName: '',
       teacher: '',
@@ -216,12 +241,37 @@ export default {
       groupSize: 0,
       group_captain: '',
       groupMember: [],
-      groupList: []
+      groupList: [],
+      course_material: [],
+      course_homework: [],
+      material_headers: [
+        {
+          text: '文件名',
+          align: 'start',
+          sortable: true,
+          value: 'fileName'
+        },
+        {text: '上传者', value: 'teacherName'},
+        {text: '上传日期', value: 'time'},
+        {text: '下载', value: 'actions'}
+      ],
+      homework_headers: [
+        {
+          text: '文件名',
+          align: 'start',
+          sortable: true,
+          value: 'fileName'
+        },
+        {text: '上传者', value: 'studentName'},
+        {text: '上传日期', value: 'time'},
+        {text: '下载', value: 'actions'}
+      ]
     }
   },
   mounted () {
     this.getCourseDetail()
     this.getGroupMember()
+    this.getMaterial()
   },
   methods: {
     getCourseDetail () {
@@ -234,7 +284,17 @@ export default {
         this.major = res.data.data.major
         this.stopTime = res.data.data.stopTime
         this.intro = res.data.data.intro
+        this.teacherId = res.data.data.teacherId
       })
+    },
+    getMaterial () {
+      this.$axios.post('/file/get_all_materials', this.$qs.stringify({
+        userId: this.teacherId
+      }))
+        .then(res => {
+          console.log(res)
+          this.course_material = res.data.data
+        })
     },
     getGroupMember () {
       this.$axios.post('/group/get_group_info.do', this.$qs.stringify({
@@ -352,6 +412,40 @@ export default {
           this.isDelete = false
         }
       })
+    },
+    download_material (item) {
+      this.$axios.get('/file/download_material', {
+        params: {
+          fileName: item.fileName
+        },
+        responseType: 'blob'
+      })
+        .then(res => {
+          if (!res.data) {
+            return
+          }
+          const blob = new Blob([res.data], {type: 'application/octet-stream'})
+          console.log(blob)
+          const a = document.createElement('a')
+          a.href = URL.createObjectURL(blob)
+          a.download = item.fileName
+          a.click()
+          URL.revokeObjectURL(a.href)
+          a.remove()
+        })
+    },
+    uploadHomework () {
+      if (this.homework.length === 0) return
+      let formData = new FormData()
+      formData.append('file', this.homework)
+      formData.append('teacherId', this.teacherId)
+      this.$axios.post('/file/upload_homework', formData, {headers: {'Content-Type': 'multipart/form-data'}})
+        .then(res => {
+          if (res.data.status === 0) {
+            window.alert('上传成功')
+            this.homework = []
+          }
+        })
     }
   }
 }

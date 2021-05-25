@@ -216,6 +216,7 @@ export default {
         if (res.data.status === 0) {
           this.getUnselectCourse()
           this.getChosenCourse()
+          this.tab = 0
         }
       })
     },

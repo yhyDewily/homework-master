@@ -89,7 +89,7 @@
                         required
                       ></v-text-field>
                       <v-text-field
-                        v-model="newUser.email"
+                        v-model="newUser.password"
                         :counter="16"
                         :rules="passwordRules"
                         label="密码"
@@ -179,13 +179,25 @@ export default {
           if (res.data.status === 0) {
             this.$cookie.set('userId', res.data.data.id, {expires: 'Session'})
             localStorage.setItem('isLogin', '1')
+            localStorage.setItem('role', res.data.data.role)
+            localStorage.setItem('userId', res.data.data.id)
             this.$store.dispatch('saveUserName', res.data.data.username)
-            this.$router.push({
-              name: 'Home',
-              params: {
-                from: 'login'
-              }
-            })
+            this.$store.dispatch('saveUserRole', res.data.data.role)
+            if (res.data.data.role === 0) {
+              this.$router.push({
+                name: 'Home',
+                params: {
+                  from: 'login'
+                }
+              })
+            } else if (res.data.data.role === 1) {
+              this.$router.push({
+                name: 'teacher_home',
+                params: {
+                  from: 'login'
+                }
+              })
+            }
           } else if (res.data.status === 1) {
             window.alert(res.data.msg)
           }
@@ -207,7 +219,7 @@ export default {
     },
     register () {
       if (this.$refs.reg.validate()) {
-        this.$axios.post('', this.$qs.stringify({
+        this.$axios.post('/user/register.do', this.$qs.stringify({
           name: this.newUser.username,
           password: this.newUser.password,
           mail: this.newUser.email,

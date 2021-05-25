@@ -6,8 +6,8 @@ Vue.use(Vuex)
 
 const state = {
   username: '', // 登录用户名
-  userId: ''
-
+  userId: '',
+  role: null
 }
 export default new Vuex.Store({
   state,

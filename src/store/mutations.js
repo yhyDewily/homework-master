@@ -4,5 +4,8 @@ export default {
   },
   saveUserId (state, userId) {
     state.userId = userId
+  },
+  saveUserRole (state, role) {
+    state.role = role
   }
 }

@@ -9,6 +9,21 @@
         <p class="display-1 text--primary">
           {{ title }}
         </p>
+        <v-btn color="error"
+               style="float: right; position: relative" v-show="role === '1'"
+               @click="dialog=true"
+        >删除该贴</v-btn>
+        <v-dialog v-model="dialog" max-width="500px">
+          <v-card>
+            <v-card-title class="headline">确定要删除该贴吗？</v-card-title>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="dialog = false">取消</v-btn>
+              <v-btn color="blue darken-1" text @click="delQuestion">确定</v-btn>
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
         <p>发帖时间：{{ time }}</p>
         <div class="headline text--primary">
           {{ content }}
@@ -85,6 +100,7 @@ export default {
   data () {
     return {
       answer: '',
+      dialog: false,
       questionId: '',
       title: '',
       creator: '',
@@ -92,6 +108,7 @@ export default {
       count: 0,
       content: '',
       comment: '',
+      role: '',
       commentList: [],
       subComments: []
     }
@@ -101,6 +118,7 @@ export default {
   },
   methods: {
     getQuestionDetail () {
+      this.role = localStorage.getItem('role')
       this.questionId = this.$route.params.id
       this.$axios.post('/forum/get_question_by_id', this.$qs.stringify({
         questionId: this.questionId
@@ -134,6 +152,21 @@ export default {
         if (res.data.status === 0) {
           window.alert('回复成功')
           this.getQuestionDetail()
+        }
+      })
+    },
+    delQuestion () {
+      this.$axios.post('/forum/delete_question', this.$qs.stringify({
+        id: this.questionId
+      })).then(res => {
+        console.log(res)
+        if (res.data.status === 0) {
+          window.alert('删除成功')
+          this.dialog = false
+          this.$router.push('/teacher_home/teacher_forum')
+        } else {
+          window.alert('删除失败')
+          this.dialog = false
         }
       })
     }

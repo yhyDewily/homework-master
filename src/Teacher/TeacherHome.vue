@@ -5,7 +5,7 @@
       app
     >
       <v-list dense>
-        <v-list-item link to="/">
+        <v-list-item link to="/teacher_home">
           <v-list-item-action>
             <v-icon>mdi-home</v-icon>
           </v-list-item-action>
@@ -13,7 +13,7 @@
             <v-list-item-title>首页</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item link to="/course">
+        <v-list-item link to="/teacher_home/teacher_course">
           <v-list-item-action>
             <v-icon>mdi-cart</v-icon>
           </v-list-item-action>
@@ -21,7 +21,7 @@
             <v-list-item-title>课程管理</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item link to="/person_info">
+        <v-list-item link to="/teacher_home/teacher_person_info">
           <v-list-item-action>
             <v-icon>mdi-account-box-multiple</v-icon>
           </v-list-item-action>
@@ -29,15 +29,7 @@
             <v-list-item-title>我的信息</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item link to="/grade">
-          <v-list-item-action>
-            <v-icon>mdi-layers-triple</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>我的成绩</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item link to="/forum">
+        <v-list-item link to="/teacher_home/teacher_forum">
           <v-list-item-action>
             <v-icon>mdi-folder-multiple</v-icon>
           </v-list-item-action>
@@ -71,7 +63,7 @@
 import {mapState} from 'vuex'
 
 export default {
-  name: 'Home',
+  name: 'teacher_home',
   data: () => ({
     drawer: null,
     name: ''
@@ -85,6 +77,10 @@ export default {
     if (this.$cookie.get('userId')) {
       this.getUser()
     }
+    // window.onbeforeunload = function (e) {
+    //   let storage = window.localStorage
+    //   storage.clear()
+    // }
   },
   methods: {
     getUser () {
